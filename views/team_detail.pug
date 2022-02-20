@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  div.row
+    div.col-6
+      h1= title
+    div.col-6
+      form(method='POST' action='/team/'+team.id+'/delete')
+        input#name.form-control(type='hidden' name='id' value=(undefined===team ? '' : team.id))
+        button.btn.btn-success.button-left.btn-red(type='submit') Delete
+      a(href='/team/'+team.id+'/update')
+        button(type="button").btn.btn-success.button-left Edit
+  hr
+
+  div.row
+    div.col-4
+      h5 Shortcut
+      p #{team.shortcut}
+    div.col-4
+      h5 Team Leader
+      p #{team.team_leader}

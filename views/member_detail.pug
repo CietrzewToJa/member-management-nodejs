@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  div.row
+    div.col-6
+      h1= title
+    div.col-6
+      form(method='POST' action='/member/'+member.id+'/delete')
+        input#name.form-control(type='hidden' name='id' value=(undefined===member ? '' : member.id))
+        button.btn.btn-success.button-left.btn-red(type='submit') Delete
+      a(href='/member/'+member.id+'/update')
+        button(type="button").btn.btn-success.button-left Edit
+  hr
+
+  div.row
+    div.col-4
+      h5 Birth Year
+      p #{member.year_of_birth_formatted}
+    div.col-4
+      h5 Payment
+      p #{member.payment} zł
+    div.col-4
+      h5 Team
+      p #{member.team.name}
+    div.col-4
+      h5 Place of residence
+      p #{member.place_of_residence}
+    div.col-4
+      h5 Role
+      p #{member.role.name}
+    div.col-4
+      h5 Pesel
+      p #{member.pesel}

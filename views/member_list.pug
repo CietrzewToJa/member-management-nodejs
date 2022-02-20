@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  div.row
+    div.col-6
+      h1= title
+    div.col-6
+      a(href="/member/create")
+        button(type="button").btn.btn-success.button-left Add
+
+  table.table
+    thead
+      tr
+        th(scope='col') lp.
+        th(scope='col') First Name
+        th(scope='col') Family Name
+        th(scope='col') Birth Year
+        th(scope='col') Payment
+        th(scope='col') Team
+        th(scope='col') Place of Residence
+        th(scope='col') Role
+        th(scope='col')
+    tbody
+      - var n = 1
+      each member in member_list
+        tr
+          th(scope='row')= n++
+          td #{member.first_name}
+          td #{member.family_name}
+          td #{member.year_of_birth_formatted}
+          td #{member.payment}
+          td #{member.team.shortcut}
+          td #{member.place_of_residence}
+          td #{member.role.name}
+          td
+            a(href='/member/'+member.id)
+              button(type="button").btn.btn-success.btn-blue.btn-small Details

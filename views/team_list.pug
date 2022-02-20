@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  div.row
+    div.col-6
+      h1= title
+    div.col-6
+      a(href="/team/create")
+        button(type="button").btn.btn-success.button-left Add
+
+  table.table
+    thead
+      tr
+        th(scope='col') lp.
+        th(scope='col') Name
+        th(scope='col') Shortcut
+        th(scope='col') Team leader
+        th(scope='col')
+    tbody
+      - var n = 1
+      each team in team_list
+        tr
+          th(scope='row')= n++
+          td #{team.name}
+          td #{team.shortcut}
+          td
+            if team.team_leader
+              #{team.team_leader}
+            else
+              nope
+          td
+            a(href='/team/'+team.id)
+              button(type="button").btn.btn-success.btn-blue.btn-small Details

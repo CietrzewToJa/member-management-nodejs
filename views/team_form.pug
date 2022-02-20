@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  div.row
+    h1 #{title}
+
+  div.row.justify-content-center
+    div.col-6
+      form(method='POST' action='')
+        div.form-group
+          label(for='name') Name:
+          input#name.form-control(type='text' name='name' value=(undefined===team ? '' : team.name))
+          label(for='shortcut') Shortcut:
+          input#shortcut.form-control(type='text' name='shortcut' value=(undefined===team ? '' : team.shortcut))
+        button.btn.btn-primary(type='submit') Submit
+
+//-         div.form-group
+//-           label(for='member') Member:
+//-           select#member.form-control(type='select', placeholder='Select member' name='member' required='true' )
+//-             - members.sort(function(a, b) {let textA = a.family_name.toUpperCase(); let textB = b.family_name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+//-             option(value='') -
+//-             for member in members
+//-               option(value=member._id) #{member.family_name} #{member.first_name}
+
+      if errors
+       ul
+        for error in errors
+          li!= error.msg

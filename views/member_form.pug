@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  div.row
+    h1 #{title}
+
+  div.row.justify-content-center
+    div.col-6
+      form(method='POST' action='')
+        div.form-group
+          label(for='first_name') First Name:
+          input#name.form-control(type='text' name='first_name' value=(undefined===member ? '' : member.first_name))
+          label(for='family_name') Family Name:
+          input#name.form-control(type='text' name='family_name' value=(undefined===member ? '' : member.family_name))
+          label(for='year_of_birth') Year of birth:
+          input#name.form-control(type='text' name='year_of_birth' value=(undefined===member ? '' : member.year_of_birth))
+          label(for='payment') Payment:
+          input#name.form-control(type='text' name='payment' value=(undefined===member ? '' : member.payment))
+          label(for='place_of_residence') Place of residence:
+          input#name.form-control(type='text' name='place_of_residence' value=(undefined===member ? '' : member.place_of_residence))
+          label(for='pesel') PESEL:
+          input#name.form-control(type='text' name='pesel' value=(undefined===member ? '' : member.pesel))
+        div.form-group
+          label(for='team') Team:
+          select#author.form-control(type='select', placeholder='Select team' name='team' required='true' )
+            - teams.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+            for team in teams
+              option(value=team._id) #{team.name}
+        div.form-group
+          label(for='role') Role:
+          select#role.form-control(type='select', placeholder='Select role' name='role' required='true' )
+            - roles.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+            for role in roles
+              option(value=role._id) #{role.name}
+        button.btn.btn-primary(type='submit') Submit
+
+      if errors
+       ul
+        for error in errors
+          li!= error.msg
