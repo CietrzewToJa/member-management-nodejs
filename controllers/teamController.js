@@ -1,22 +1,39 @@
 var Member = require('../models/member');
 var Team = require('../models/team');
 var Role = require('../models/role');
+var User = require('../models/user')
 
 var Team = require('../models/team');
 const Console = require("console");
+
+var session = require('express-session');  // session middleware
 
 var async = require('async');
 const {body, validationResult} = require("express-validator");
 
 exports.team_list = function (req, res) {
 
+//    var user = new User({ username: 'candy', active: false }, 'cane');
+
+//    user.save();
+    Console.log('saved')
+//    Console.log(user)
+
+    User.find({}, 'username').exec(function(err, users) {
+        if (err) {
+            return next(err);
+        }
+
+        Console.log(users);
+    })
+
     Team.find({}, 'name shortcut team_leader')
+        .populate('team_leader')
         .exec(function (err, list_teams) {
             if (err) {
                 return next(err);
             }
 
-            Console.log(list_teams);
 
             res.render('team_list', {title: 'Team List', team_list: list_teams});
         });
@@ -24,10 +41,9 @@ exports.team_list = function (req, res) {
 
 exports.team_detail = function (req, res) {
 
-    Team.findOne({'id': req.params.id})
+    Team.findById(req.params.id)
         .populate('team_leader')
         .exec(function (err, team) {
-            Console.log(team)
 
             if (err) {
                 return next(err);
@@ -49,7 +65,6 @@ exports.team_create_get = function (req, res) {
 };
 
 exports.team_create_post = function (req, res, next) {
-    Console.log('stared')
 
     const errors = validationResult(req);
 
@@ -64,7 +79,6 @@ exports.team_create_post = function (req, res, next) {
         res.render('team_form', {title: 'Create Team', team: team, errors: errors.array()});
         return;
     } else {
-        Console.log('validated')
 
         Team.findOne({'shortcut': req.body.shortcut})
             .exec(function (err, found_team) {
@@ -114,18 +128,53 @@ exports.team_update_get = function (req, res) {
             return next(err);
         }
 
-        for (var all_g_iter = 0; all_g_iter < results.genres.length; all_g_iter++) {
-            for (var book_g_iter = 0; book_g_iter < results.book.genre.length; book_g_iter++) {
-                if (results.genres[all_g_iter]._id.toString()===results.book.genre[book_g_iter]._id.toString()) {
-                    results.genres[all_g_iter].checked='true';
-                }
-            }
-        }
-        res.render('book_form', { title: 'Update Book', authors: results.authors, genres: results.genres, book: results.book });
+        res.render('team_form', { title: 'Update Team', team: results.team, members: results.members });
     });
 };
 
-// Handle Author update on POST.
-exports.team_update_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: Author update POST');
-};
+exports.team_update_post = [
+
+//    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).escape(),
+//    body('author', 'Author must not be empty.').trim().isLength({ min: 1 }).escape(),
+//    body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }).escape(),
+//    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }).escape(),
+//    body('genre.*').escape(),
+
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        var team = new Team(
+          { name: req.body.name,
+            shortcut: req.body.shortcut,
+            team_leader: req.body.team_leader,
+            _id: req.params.id //This is required, or a new ID will be assigned!
+           });
+
+        if (!errors.isEmpty()) {
+
+            async.parallel({
+                team: function(callback) {
+                    Team.findById(req.params.id).populate('team_leader').exec(callback);
+                },
+                members: function(callback) {
+                    Member.find(callback);
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                res.render('team_form', { title: 'Update Team', team: results.team, members: results.members, errors: errors.array() });
+            });
+            return;
+        }
+        else {
+            Team.findByIdAndUpdate(req.params.id, team, {}, function (err,theteam) {
+
+                if (err) { return next(err); }
+                   res.redirect(theteam.url);
+                });
+        }
+    }
+];
+

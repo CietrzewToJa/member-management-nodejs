@@ -18,4 +18,5 @@ block content
       p #{team.shortcut}
     div.col-4
       h5 Team Leader
-      p #{team.team_leader}
+      if team.team_leader
+        p #{team.team_leader.first_name} #{team.team_leader.family_name}

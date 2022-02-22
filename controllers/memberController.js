@@ -1,30 +1,39 @@
 var Member = require('../models/member');
 var Team = require('../models/team');
 var Role = require('../models/role');
+var User = require('../models/user');
 
 var async = require('async');
 const {body, validationResult} = require("express-validator");
-const Console = require("console");
+var Console = require("console");
 
 exports.index = function (req, res) {
 
     async.parallel({
-        book_count: function (callback) {
-            Member.countDocuments({}, callback); // Pass an empty object as match condition to find all documents of this collection
+        member_count: function (callback) {
+            Member.countDocuments({}, callback);
         },
-        author_count: function (callback) {
+        team_count: function (callback) {
             Team.countDocuments({}, callback);
         },
-        genre_count: function (callback) {
+        role_count: function (callback) {
             Role.countDocuments({}, callback);
         }
     }, function (err, results) {
-        res.render('index', {title: 'Local Library Home', error: err, data: results});
+        res.render('index', {title: 'Member Management System', error: err, data: results});
     });
 };
 
 // Display list of all Authors.
 exports.member_list = function (req, res) {
+
+//    User.find({}, 'username').exec(function(err, username) {
+//        if(err) {
+//            return next(err)
+//        }
+//
+//        Console.log(username)
+//    })
 
     Member.find({}, 'first_name family_name year_of_birth payment team place_of_residence role')
         .populate('role')

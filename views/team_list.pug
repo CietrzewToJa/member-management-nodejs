@@ -25,9 +25,9 @@ block content
           td #{team.shortcut}
           td
             if team.team_leader
-              #{team.team_leader}
+              p #{team.team_leader.first_name} #{team.team_leader.family_name}
             else
-              nope
+              p -
           td
             a(href='/team/'+team.id)
               button(type="button").btn.btn-success.btn-blue.btn-small Details
